@@ -1,0 +1,13 @@
+name: 'Setup Parallel Works CLI'
+description: 'Install the Parallel Works CLI tool'
+branding:
+  icon: 'download-cloud'
+  color: 'blue'
+inputs:
+  version:
+    description: 'Version of the Parallel Works CLI to install (default: latest)'
+    required: false
+    default: 'latest'
+runs:
+  using: 'node24'
+  main: 'dist/index.js'
