@@ -28201,21 +28201,51 @@ module.exports = {
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core_1 = __importDefault(__nccwpck_require__(6966));
-const exec_1 = __importDefault(__nccwpck_require__(2851));
-const io_1 = __importDefault(__nccwpck_require__(378));
-const tool_cache_1 = __importDefault(__nccwpck_require__(5440));
-const path_1 = __importDefault(__nccwpck_require__(6928));
+const core = __importStar(__nccwpck_require__(6966));
+const exec = __importStar(__nccwpck_require__(2851));
+const io = __importStar(__nccwpck_require__(378));
+const tc = __importStar(__nccwpck_require__(5440));
+const path = __importStar(__nccwpck_require__(6928));
 async function run() {
     try {
-        const version = core_1.default.getInput('version') || 'latest';
+        const version = core.getInput('version') || 'latest';
         // Validate that only 'latest' is provided (we don't support other versions yet)
         if (version !== 'latest') {
-            core_1.default.setFailed(`Only 'latest' version is supported. Provided: ${version}`);
+            core.setFailed(`Only 'latest' version is supported. Provided: ${version}`);
             return;
         }
         // Determine platform and architecture
@@ -28261,35 +28291,35 @@ async function run() {
         else {
             throw new Error(`Unsupported platform: ${platform}`);
         }
-        core_1.default.info(`Downloading Parallel Works CLI from: ${downloadUrl}`);
+        core.info(`Downloading Parallel Works CLI from: ${downloadUrl}`);
         // Download the binary
-        const downloadPath = await tool_cache_1.default.downloadTool(downloadUrl);
+        const downloadPath = await tc.downloadTool(downloadUrl);
         // Create a directory for the tool
-        const toolDir = path_1.default.join(process.env.RUNNER_TEMP || '/tmp', 'pw-cli');
-        await io_1.default.mkdirP(toolDir);
+        const toolDir = path.join(process.env.RUNNER_TEMP || '/tmp', 'pw-cli');
+        await io.mkdirP(toolDir);
         // Move and rename the binary
-        const binaryPath = path_1.default.join(toolDir, binaryName);
-        await io_1.default.mv(downloadPath, binaryPath);
+        const binaryPath = path.join(toolDir, binaryName);
+        await io.mv(downloadPath, binaryPath);
         // Make it executable (Unix-like systems)
         if (platform !== 'win32') {
-            await exec_1.default.exec('chmod', ['+x', binaryPath]);
+            await exec.exec('chmod', ['+x', binaryPath]);
         }
         // Add to PATH
-        core_1.default.addPath(toolDir);
+        core.addPath(toolDir);
         // Verify installation
         try {
-            await exec_1.default.exec('pw', ['--version']);
-            core_1.default.info('Parallel Works CLI installed successfully!');
+            await exec.exec('pw', ['--version']);
+            core.info('Parallel Works CLI installed successfully!');
         }
         catch (error) {
             // If --version fails, try just running 'pw' to see if it's working
-            core_1.default.info('CLI installed, version check may not be available');
+            core.info('CLI installed, version check may not be available');
         }
         // Set output
-        core_1.default.setOutput('pw-path', binaryPath);
+        core.setOutput('pw-path', binaryPath);
     }
     catch (error) {
-        core_1.default.setFailed(`Action failed with error: ${error instanceof Error ? error.message : String(error)}`);
+        core.setFailed(`Action failed with error: ${error instanceof Error ? error.message : String(error)}`);
     }
 }
 run();
